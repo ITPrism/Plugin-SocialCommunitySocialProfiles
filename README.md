@@ -6,7 +6,7 @@ Content - SocialCommunity Social Profiles
 This plugin displays social profiles of a user on its details page.
 
 ##Download
-[Download Plugin Content - SocialCommunity Social Profiles](http://itprism.com/free-joomla-extensions/others/open-source-social-network) from SocialCommunity page.
+[Download the plugin](http://itprism.com/free-joomla-extensions/others/open-source-social-network) from SocialCommunity page.
 
 Changelog
 ---------
