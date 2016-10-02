@@ -46,4 +46,8 @@
 			</fieldset>
         </fields>
 	</config>
+
+    <updateservers>
+        <server type="extension" priority="1" name="Content - SocialCommunity Social Profiles">http://cdn.itprism.com/updates/socialcommunity/plg_scsocialprofiles.xml</server>
+    </updateservers>
 </extension>
