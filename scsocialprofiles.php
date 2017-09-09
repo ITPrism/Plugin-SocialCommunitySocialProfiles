@@ -53,32 +53,40 @@ class plgContentScsocialprofiles extends JPlugin
         // Load language
         $this->loadLanguage();
 
+        $databaseRequest = new \Prism\Database\Request\Request();
+        $databaseRequest
+            ->addCondition(new \Prism\Database\Condition\Condition(['column' => 'user_id', 'value' => $item->user_id]))
+            ->requestField(new \Prism\Database\Request\Field(['column' => 'link']))
+            ->requestField(new \Prism\Database\Request\Field(['column' => 'service']));
+
+        $mapper         = new \Socialcommunity\Socialprofile\Mapper(new \Socialcommunity\Socialprofile\Gateway\JoomlaGateway(JFactory::getDbo()));
+        $repository     = new \Socialcommunity\Socialprofile\Repository($mapper);
+        $socialProfiles = $repository->fetchCollection($databaseRequest);
+
+        $sprofiles = array();
+
+        /** @var \Socialcommunity\Socialprofile\Socialprofile $sprofile */
+        foreach ($socialProfiles as $sprofile) {
+            $sprofiles[$sprofile->getService()] = $sprofile->getLink();
+        }
+
         $output = array();
 
-        if ($this->params->get('display_website', 1) and $item->website !== '') {
+        if ($item->website !== '' && $this->params->get('display_website', Prism\Constants::YES)) {
             $output[] = '<a href="'.htmlentities($item->website, ENT_QUOTES, 'UTF-8').'" class="sc-website-link" target="_blank">';
             $output[] = JHtmlString::truncate($item->website, 32, true, false);
             $output[] = '</a>';
         }
 
-        $profileAlias = $item->socialProfiles->getAlias('facebook');
-        if ($this->params->get('display_facebook', 1) and $profileAlias) {
-            $output[] = '<a href="' . 'https://facebook.com/' . htmlspecialchars($profileAlias, ENT_QUOTES, 'UTF-8') . '" class="sc-socialprofile-link" target="_blank">';
+        if (array_key_exists('facebook', $sprofiles) && $this->params->get('display_facebook', Prism\Constants::YES)) {
+            $output[] = '<a href="' . htmlentities($sprofiles['facebook'], ENT_QUOTES, 'UTF-8') . '" class="sc-socialprofile-link" target="_blank">';
             $output[] = '<img src="media/com_socialcommunity/images/facebook_32x32.png" alt="' . JText::sprintf('PLG_CONTENT_SCSOCIALPROFILES_SOCIAL_PROFILE_ALT', 'Facebook', htmlspecialchars($item->name, ENT_QUOTES, 'UTF-8')) . '" width="32" height="32" />';
             $output[] = '</a>';
         }
 
-        $profileAlias = $item->socialProfiles->getAlias('twitter');
-        if ($this->params->get('display_twitter', 1) and $profileAlias) {
-            $output[] = '<a href="' . 'https://twitter.com/' . htmlspecialchars($profileAlias, ENT_QUOTES, 'UTF-8') . '" class="sc-socialprofile-link" target="_blank">';
+        if (array_key_exists('twitter', $sprofiles) && $this->params->get('display_twitter', Prism\Constants::YES)) {
+            $output[] = '<a href="' .htmlentities($sprofiles['twitter'], ENT_QUOTES, 'UTF-8') . '" class="sc-socialprofile-link" target="_blank">';
             $output[] = '<img src="media/com_socialcommunity/images/twitter_32x32.png" alt="' . JText::sprintf('PLG_CONTENT_SCSOCIALPROFILES_SOCIAL_PROFILE_ALT', 'Twitter', htmlspecialchars($item->name, ENT_QUOTES, 'UTF-8')) . '" width="32" height="32" />';
-            $output[] = '</a>';
-        }
-
-        $profileAlias = $item->socialProfiles->getAlias('linkedin');
-        if ($this->params->get('display_linkedin', 1) and $profileAlias) {
-            $output[] = '<a href="' . 'https://linkedin.com/in/' . htmlspecialchars($profileAlias, ENT_QUOTES, 'UTF-8') . '" class="sc-socialprofile-link" target="_blank">';
-            $output[] = '<img src="media/com_socialcommunity/images/linkedin_32x32.png" alt="' . JText::sprintf('PLG_CONTENT_SCSOCIALPROFILES_SOCIAL_PROFILE_ALT', 'LinkedIn', htmlspecialchars($item->name, ENT_QUOTES, 'UTF-8')) . '" width="32" height="32" />';
             $output[] = '</a>';
         }
 
